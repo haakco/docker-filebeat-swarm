@@ -1,0 +1,68 @@
+filebeat.inputs:
+
+  # Each - is an input. Most options can be set at the input level, so
+  # you can use different inputs for various configurations.
+  # Below are the input specific configurations.
+
+  - type: log
+
+    # Change to true to enable this input configuration.
+    enabled: false
+
+    # Paths that should be crawled and fetched. Glob based paths.
+    paths:
+      - /var/log/*.log
+
+filebeat.config.modules:
+  # Glob pattern for configuration loading
+  path: ${path.config}/modules.d/*.yml
+
+  # Set to true to enable config reloading
+  reload.enabled: true
+
+setup.template.settings:
+  index.number_of_shards: 1
+  index.codec: best_compression
+  _source.enabled: true
+
+setup.template:
+  overwrite: true
+  enabled: true
+  name: "filebeat"
+  pattern: "filebeat-*"
+
+setup.kibana:
+
+  # Kibana Host
+  # Scheme and port can be left out and will be set to the default (http and 5601)
+  # In case you specify and additional path, the scheme is required: http://localhost:5601/path
+  # IPv6 addresses should always be defined as: https://[2001:db8::1]:5601
+  #host: "localhost:5601"
+  host: "kibana.server:443"
+  protocol: "https"
+  username: "${ELK_ELASTIC_PASSWORD}"
+  password: "${ELK_ELASTICSEARCH_USERNAME}"
+
+output.elasticsearch:
+  # Array of hosts to connect to.
+  hosts: ['http://elasticsearch.server:9200']
+  protocol: "https"
+  username: "${ELK_ELASTIC_PASSWORD}"
+  password: "${ELK_ELASTICSEARCH_USERNAME}"
+  bulk_max_size: 3200
+  worker: 4
+  compression_level: 9
+
+processors:
+  - add_host_metadata: ~
+  - add_cloud_metadata: ~
+  - add_docker_metadata:
+      host: "unix:///var/run/docker.sock"
+  - add_kubernetes_metadata: ~
+
+logging.level: warning
+monitoring.enabled: true
+filebeat.autodiscover:
+  providers:
+    - type: docker
+      hints.enabled: true
