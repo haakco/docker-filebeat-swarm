@@ -38,17 +38,15 @@ setup.kibana:
   # In case you specify and additional path, the scheme is required: http://localhost:5601/path
   # IPv6 addresses should always be defined as: https://[2001:db8::1]:5601
   #host: "localhost:5601"
-  host: "kibana.server:443"
-  protocol: "https"
-  username: "${ELK_ELASTIC_PASSWORD}"
-  password: "${ELK_ELASTICSEARCH_USERNAME}"
+  host: "http://kibana.server:5601"
+  username: "${ELK_ELASTICSEARCH_USERNAME}"
+  password: "${ELK_ELASTIC_PASSWORD}"
 
 output.elasticsearch:
   # Array of hosts to connect to.
   hosts: ['http://elasticsearch.server:9200']
-  protocol: "https"
-  username: "${ELK_ELASTIC_PASSWORD}"
-  password: "${ELK_ELASTICSEARCH_USERNAME}"
+  username: "${ELK_ELASTICSEARCH_USERNAME}"
+  password: "${ELK_ELASTIC_PASSWORD}"
   bulk_max_size: 3200
   worker: 4
   compression_level: 9
